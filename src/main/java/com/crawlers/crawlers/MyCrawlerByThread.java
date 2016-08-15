@@ -1,6 +1,6 @@
 package com.crawlers.crawlers;
 import java.util.ArrayList;
-
+import java.util.concurrent.*;
 
 
 /**
@@ -25,20 +25,23 @@ public class MyCrawlerByThread extends MyCrawler implements Runnable {
 
             long startTime=System.currentTimeMillis();
             System.out.println("采集开始");
-            ArrayList<Thread> threadList = new ArrayList<Thread>(CrawlConfig.CRAWL_THREAD_NUM);
+            ExecutorService executorService=Executors.newCachedThreadPool();
+           // ArrayList<Thread> threadList = new ArrayList<Thread>(CrawlConfig.CRAWL_THREAD_NUM);
             for(int i = 0 ; i < CrawlConfig.CRAWL_THREAD_NUM; i++) {
                 MyCrawlerByThread crawler = new MyCrawlerByThread(i);
                 Thread t = new Thread(crawler,"thread_"+i);
                 System.out.println(Thread.currentThread().getName()+"xian");
-                t.start();
-                threadList.add(t);
+              //  t.start();
+              //  threadList.add(t);
                 Thread.sleep(10L);
+                executorService.execute(t);
             }
-            
+      /*      
             while(threadList.size() > 0) {
                 Thread child = (Thread) threadList.remove(0);
                 child.join();
-            }
+            }*/
+            executorService.shutdown();
             
 //            while(true){  
 //                if(MyCrawlerByThread.queue.threads==0&&MyCrawlerByThread.queue.linkQueue.isEmpty()&& Thread.activeCount() == 1){  
